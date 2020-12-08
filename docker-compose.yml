@@ -1,0 +1,60 @@
+# Docker compose file for Quokka
+# Developed by Patrick Holahan
+# Maintained by tjunyat@gmail.com
+
+version: "3.8"
+
+services:
+  db:
+    image: postgres:13.1-alpine
+    #container_name: quokka_pgdb
+    environment:
+      # PG super user username:
+      POSTGRES_USER: quokka
+      # PG super user password:
+      POSTGRES_PASSWORD: myquokkapw
+      # PG DB if different from POSTGRES_USER
+      #POSTGRES_DB: YOUR_DB_NAME_HERE
+    volumes:
+      - type: bind
+        source: /Users/patrickh/PycharmProjects/quokka/quokka/data/pg
+        target: /var/lib/postgresql/data
+    restart: on-failure
+    ports: 
+      - "5432:5432"
+    #networks:
+      #- qn
+
+  quokka-server:
+    #container_name: quokka_server
+    build: 
+      context: .
+      dockerfile: ubuntu.Dockerfile
+      args:
+        buildno: 0.1
+    image: qserver:0.1
+    #command: sh -c "flask run --host 0.0.0.0"
+    volumes:
+      - type: bind
+        source: /Users/patrickh/PycharmProjects/quokka
+        target: /quokka
+    restart: on-failure
+    #networks:
+      #- qn
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_ENV: development
+      FLASK_APP: quokka
+      FLASK_DEBUG: 1
+    depends_on:
+      - db
+    links:
+      - db
+
+#networks:
+  # Quokka Network - qn
+  #qn:
+    #driver: overlay
+    #external: true
+
