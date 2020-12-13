@@ -1,4 +1,4 @@
 #!/bin/zsh
 # Script to access qtest shell
 
-docker exec -it q_quokka-server_1 bash
+docker exec -it q_db_1 bash

@@ -23,14 +23,11 @@ PACKAGES_INSTALLED_LOG="/tmp/packages.lst"
 # git and ca-certificates is needed for git clone; not building
 # alternate would be to download a release tarball with curl or wget
 # xz-utils is needed for tar to uncompress an .xz tarball
-QUOKKA_SERVER_BUILD_PACKAGES="git ca-certificates curl xz-utils "
+QUOKKA_SERVER_BUILD_PACKAGES="git ca-certificates curl xz-utils"
 
 # Core list from docs - postgresql-libs for pip3 and psycopg2-binary
-QUOKKA_SERVER_BUILD_PACKAGES="$QUOKKA_SERVER_BUILD_PACKAGES tzdata make python3-dev libffi-dev openssl postgresql postgresql-client libxslt-dev libxml2-dev npm"
-QUOKKA_BASE_PACKAGES="tzdata make postgresql postgresql-contrib postgresql-client python3-dev python3 python3-pip npm sudo"
-
-# Add systemd for rabbitmq-server startup (systemctl)
-QUOKKA_BASE_PACKAGES="$QUOKKA_BASE_PACKAGES systemd"
+QUOKKA_SERVER_BUILD_PACKAGES="$QUOKKA_SERVER_BUILD_PACKAGES tzdata make python3-dev libffi-dev openssl postgresql-client libxslt-dev libxml2-dev npm"
+QUOKKA_BASE_PACKAGES="tzdata make postgresql-client python3-dev python3 python3-pip npm"
 
 # Building the servers needs g++
 #QUOKKA_SERVER_BUILD_PACKAGES="$QUOKKA_SERVER_BUILD_PACKAGES g++"
@@ -60,9 +57,8 @@ QUOKKA_ADD_PACKAGES="$QUOKKA_ADD_PACKAGES links vim iputils-ping iproute2 lsof"
 # NPM packages
 QUOKKA_NPM_PACKAGES="npx react react-dom typography @material-ui/core @material-ui/icons"
 
-# Disabled the below to use a different file and run as user quokka
 # As per https://github.com/chuckablack/quokka/wiki/Quokka-VM-Installed-Software - this needs to be run in your react UI directory, e.g. quokka/quokka-ui
-#mkdir -p /home/quokka/quokka/quokka-ui
-#cd /home/quokka//quokka/quokka-ui
-#QUOKKA_UI_NPM_PACKAGES="react-scripts react-vis material-table typeface-roboto react-diff-viewer"
+mkdir -p /quokka/quokka-ui
+cd /quokka/quokka-ui
+QUOKKA_UI_NPM_PACKAGES="react-scripts react-vis material-table typeface-roboto react-diff-viewer"
 

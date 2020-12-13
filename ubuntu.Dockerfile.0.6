@@ -1,0 +1,58 @@
+FROM ubuntu:20.04
+
+MAINTAINER Patrick Holahan <tjunyat@gmail.com>
+
+# This is using/copying the actual quokka src from Chuck Black's quokka github repo
+ENV QUOKKA_VERSION=0.5
+ENV TZ=Africa/Johannesburg
+
+#RUN useradd -ms /bin/bash quokka
+RUN useradd -rm -d /home/quokka -s /usr/bin/bash -g root -G sudo -u 10001 quokka
+USER quokka
+WORKDIR /home/quokka
+
+# Copy the OVA files
+#COPY ./quokka-ui/ .
+COPY ./qova/ ./quokka
+
+
+# Copy requisite scripts
+USER root
+WORKDIR /build
+COPY conf-scripts/* ./
+
+
+# Install the required software
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone &&\
+  /build/prepare-quokka-server.sh 
+  #/build/cleanup-quokka.sh && \
+  #rm -rf /build
+
+# RABBITMQ stuff
+#ADD conf-scripts/init.sh /init.sh
+#RUN chmod +x /init.sh
+
+# Expose relevant ports - Doesn't appear to be working for some reason
+EXPOSE 3000:3000
+EXPOSE 5000:5000
+EXPOSE 5672:5672
+EXPOSE 15672:15672
+
+# Run the flask app
+#CMD ["flask", "run"]
+#CMD ["export", "FLASK_APP='quokka'"]
+#CMD ["export", "FLASK_DEBUG='1'"]
+
+# Set the workdir for when you connect via docker exec -it
+WORKDIR /home/quokka
+
+# This command below is just to ensure the system runs and stays operational
+# If using port 5000 (default) it interupts the actual ./run-all.sh or ./run-quokka.sh scripts which also run on that port
+ENTRYPOINT ["flask"]
+CMD ["run", "--host", "0.0.0.0", "-p", "4000"]
+#ENTRYPOINT ["/root/quokka/run-all.sh"]
+#CMD ["./run-all.sh"]
+
+# Start RABBITMQ server
+# CMD ["/init.sh"]
+

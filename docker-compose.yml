@@ -4,53 +4,62 @@
 
 version: "3.8"
 
+# Disabled below and installing locally to test
 services:
-  db:
-    image: postgres:13.1-alpine
-    #container_name: quokka_pgdb
-    environment:
-      # PG super user username:
-      POSTGRES_USER: quokka
-      # PG super user password:
-      POSTGRES_PASSWORD: myquokkapw
-      # PG DB if different from POSTGRES_USER
-      #POSTGRES_DB: YOUR_DB_NAME_HERE
-    volumes:
-      - type: bind
-        source: /Users/patrickh/PycharmProjects/quokka/quokka/data/pg
-        target: /var/lib/postgresql/data
-    restart: on-failure
-    ports: 
-      - "5432:5432"
-    #networks:
-      #- qn
+  #db:
+    #image: postgres:13.1-alpine
+    ##container_name: quokka_pgdb
+    #environment:
+      ## PG super user username:
+      #POSTGRES_USER: quokka
+      ## PG super user password:
+      #POSTGRES_PASSWORD: myquokkapw
+      ## PG DB if different from POSTGRES_USER
+      ##POSTGRES_DB: YOUR_DB_NAME_HERE
+    #volumes:
+      #- type: bind
+        #source: /Users/patrickh/PycharmProjects/quokka/quokka/data/pg
+        #target: /var/lib/postgresql/data
+    #restart: on-failure
+    #ports: 
+      #- "5432:5432"
+    ##networks:
+      ##- qn
 
   quokka-server:
     #container_name: quokka_server
+    user: quokka
     build: 
       context: .
-      dockerfile: ubuntu.Dockerfile
-      args:
-        buildno: 0.1
-    image: qserver:0.1
+      dockerfile: ubuntu.Dockerfile.0.6
+    image: qserver:0.6
     #command: sh -c "flask run --host 0.0.0.0"
-    volumes:
-      - type: bind
-        source: /Users/patrickh/PycharmProjects/quokka
-        target: /quokka
+    #volumes:
+      #- type: bind
+        #source: /Users/patrickh/PycharmProjects/quokka
+        #target: /quokka
     restart: on-failure
     #networks:
       #- qn
     ports:
+      - "15672:15672"
+      - "5672:5672"
       - "5000:5000"
+      - "3000:3000"
     environment:
       FLASK_ENV: development
       FLASK_APP: quokka
       FLASK_DEBUG: 1
-    depends_on:
-      - db
-    links:
-      - db
+      POSTGRES_USER: quokka
+      POSTGRES_PASSWORD: myquokkapw
+      RABBITMQ_USER: quokkaUser
+      RABBITMQ_PASSWORD: quokkaPass
+      RABBITMQ_PID_FILE: /var/lib/rabbitmq/mnesia/rabbitmq
+      #RABBITMQ_NODENAME=rabbitmq
+    #depends_on:
+      #- db
+    #links:
+      #- db
 
 #networks:
   # Quokka Network - qn
