@@ -13,6 +13,7 @@ apt-get install $minimal_apt_get_args $QUOKKA_BASE_PACKAGES
 apt-get install $minimal_apt_get_args $QUOKKA_RUN_PACKAGES
 
 echo "quokka    ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
+echo "postgres    ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Update npm
 #npm i npm@latest -g
@@ -82,6 +83,10 @@ chmod a+x /home/quokka/quokka/run-*.sh
 chmod a+x /home/quokka/quokka/stop-*.sh
 
 su -
+
+# Tripple checking sudo is installed
+if [ ! -f "/usr/bin/sudo" ]; then apt-get install -y sudo; fi
+
 # Set postgres DB to postgres docker container db q_db_1
 #cd /root/quokka/quokka/
 #cat __init__.py | sed 's/app.config\["SQLALCHEMY_DATABASE_URI"\]\ =\ '\''postgres:\/\/\/quokka'\''/app.config\["SQLALCHEMY_DATABASE_URI"\]\ =\ '\''postgres:\/\/quokka:myquokkapw@q_db_1'\''/g' > temp && mv temp __init__.py
@@ -89,10 +94,10 @@ su -
 # Local postgres config as per https://github.com/chuckablack/quokka/wiki/Quokka-VM-Installed-Software
 # Start the postgresql service
 service postgresql start
+systemctl enabl postgresql
 # Change accounts and create userd and DB
-su - postgres
-postgres createuser -s quokka
-postgres createdb quokka
+sudo -u postgres createuser -s quokka
+sudo -u postgres createdb quokka
 
 # Start the rabbitmq-server - This seems to take a while
 service rabbitmq-server start
