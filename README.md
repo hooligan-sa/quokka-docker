@@ -3,9 +3,9 @@ Quokka config/deploy files repo
 
 This repo contains my various attempts to configure and deploy a quokka docker container based on Chuck Black's https://github.com/chuckablack/quokka/wiki/Quokka-VM-Installed-Software
 
-#Docker Compose build/install instructions:
+# Docker Compose build/install instructions:
 
-#Pre-requisites:
+# Pre-requisites:
 docker and docker-compose need to be installed on your system
 
 # Current version is 0.7
