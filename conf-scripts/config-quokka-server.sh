@@ -1,8 +1,8 @@
 # This file is intended to be source
 # . /build/config-quokka-server.sh
 
-# THIS NEEDS TO GO SOMEWHERE??
-#AUTO_ADDED_PACKAGES=`apt-mark showauto`
+# Info gathered from Chuck Black's Quokka-VM-Installed-Software wiki page
+# https://github.com/chuckablack/quokka/wiki/Quokka-VM-Installed-Software
 
 
 # Prevent initramfs updates from trying to run grub and lilo.
@@ -17,52 +17,50 @@ minimal_apt_get_args='-y'
 PACKAGES_INSTALLED_LOG="/tmp/packages.lst"
 
 
-
 ## Build time dependencies ##
+#############################
 
 # git and ca-certificates is needed for git clone; not building
 # alternate would be to download a release tarball with curl or wget
 # xz-utils is needed for tar to uncompress an .xz tarball
-QUOKKA_SERVER_BUILD_PACKAGES="git ca-certificates curl xz-utils "
+QUOKKA_SERVER_BUILD_PACKAGES="git curl xz-utils"
 
-# Core list from docs - postgresql-libs for pip3 and psycopg2-binary
-QUOKKA_SERVER_BUILD_PACKAGES="$QUOKKA_SERVER_BUILD_PACKAGES tzdata make python3-dev libffi-dev openssl postgresql postgresql-client libxslt-dev libxml2-dev npm"
-QUOKKA_BASE_PACKAGES="tzdata make postgresql postgresql-contrib postgresql-client python3-dev python3 python3-pip npm sudo"
+# Additional packages to build the server itself - Possibly not all required
+QUOKKA_SERVER_BUILD_PACKAGES="$QUOKKA_SERVER_BUILD_PACKAGES tzdata make gcc libc-dev libffi-dev openssl sudo"
+
+
+
+## BASE ##
+##########
+
+# Actual quokka required software list from docs 
+QUOKKA_BASE_PACKAGES="postgresql postgresql-contrib postgresql-client python3-dev python3 python3-pip npm"
+
+# Split onto another line for readability
+QUOKKA_BASE_PACKAGES="$QUOKKA_BASE_PACKAGES nodejs sqlite tshark nmap graphviz"
+
+# Not using Pycharm in this container so commented out
+#QUOKKA_BASE_PACKAGES="$QUOKKA_BASE_PACKAGES snap snapd"
 
 # Add systemd for rabbitmq-server startup (systemctl)
-QUOKKA_BASE_PACKAGES="$QUOKKA_BASE_PACKAGES systemd"
-
-# Building the servers needs g++
-#QUOKKA_SERVER_BUILD_PACKAGES="$QUOKKA_SERVER_BUILD_PACKAGES g++"
+QUOKKA_BASE_PACKAGES="$QUOKKA_BASE_PACKAGES systemd rabbitmq-server"
 
 
-## Run time dependencies ##
-QUOKKA_RUN_PACKAGES="python3 python3-pip"
 
+## Additional packages ##
+#########################
 
-# Headers required for psutil - May be able to move these to build packages
-#QUOKKA_RUN_PACKAGES="$QUOKKA_RUN_PACKAGES gcc libc-dev fortify-headers linux-headers" 
-QUOKKA_RUN_PACKAGES="$QUOKKA_RUN_PACKAGES gcc libc-dev" 
-
-
-# apt-get remove --allow-remove-essential enters an infinite loop of
-# pam errors with this package
-#  login: because it depends on libpam*
-PACKAGES_REMOVE_SKIP_REGEX='(libpam|login)'
-
-
-# Additional packages required
-QUOKKA_ADD_PACKAGES="nodejs git sqlite tshark nmap graphviz rabbitmq-server"
-
-# Add links for local debugging
+# Packages I needed to test/debug while trying to make the system work
 QUOKKA_ADD_PACKAGES="$QUOKKA_ADD_PACKAGES links vim iputils-ping iproute2 lsof"
 
-# NPM packages
+
+
+## NPM packages ##
+##################
+
+# Main NMP packages
 QUOKKA_NPM_PACKAGES="npx react react-dom typography @material-ui/core @material-ui/icons"
 
-# Disabled the below to use a different file and run as user quokka
-# As per https://github.com/chuckablack/quokka/wiki/Quokka-VM-Installed-Software - this needs to be run in your react UI directory, e.g. quokka/quokka-ui
-#mkdir -p /home/quokka/quokka/quokka-ui
-#cd /home/quokka//quokka/quokka-ui
-#QUOKKA_UI_NPM_PACKAGES="react-scripts react-vis material-table typeface-roboto react-diff-viewer"
+# UI Packages - Maybe only need react-scripts installed in quokka/quokka-ui but I don't know enough yet to guarantee this
+QUOKKA_UI_NPM_PACKAGES="react-scripts react-vis material-table typeface-roboto react-diff-viewer"
 

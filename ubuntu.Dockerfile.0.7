@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 MAINTAINER Patrick Holahan <tjunyat@gmail.com>
 
 # This is using/copying the actual quokka src from Chuck Black's quokka github repo
-ENV QUOKKA_VERSION=0.5
+ENV QUOKKA_BUILD_VERSION=0.7
 ENV TZ=Africa/Johannesburg
 
 #RUN useradd -ms /bin/bash quokka
@@ -11,26 +11,17 @@ RUN useradd -rm -d /home/quokka -s /usr/bin/bash -g root -G sudo -u 10001 quokka
 USER quokka
 WORKDIR /home/quokka
 
-# Copy the OVA files
-#COPY ./quokka-ui/ .
-COPY ./qova/ ./quokka
-
-
-# Copy requisite scripts
+# Copy requisite install/conf scripts
 USER root
-WORKDIR /build
+WORKDIR /home/quokka/build
 COPY conf-scripts/* ./
 
-
-# Install the required software
+# Install the required software - This is done via script to do it all in one step
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone &&\
-  /build/prepare-quokka-server.sh 
-  #/build/cleanup-quokka.sh && \
-  #rm -rf /build
-
-# RABBITMQ stuff
-#ADD conf-scripts/init.sh /init.sh
-#RUN chmod +x /init.sh
+  /home/quokka/build/prepare-quokka-server.sh 
+# The below is to attempt to flatten the image - Disabled to just it everything working first
+  #/home/quokka/build/cleanup-quokka.sh && \
+  #rm -rf /home/quokka/build
 
 # Expose relevant ports - Doesn't appear to be working for some reason
 EXPOSE 3000:3000
@@ -49,7 +40,7 @@ WORKDIR /home/quokka
 # This command below is just to ensure the system runs and stays operational
 # If using port 5000 (default) it interupts the actual ./run-all.sh or ./run-quokka.sh scripts which also run on that port
 ENTRYPOINT ["flask"]
-CMD ["run", "--host", "0.0.0.0", "-p", "4000"]
+CMD ["run", "--host", "0.0.0.0", "-p", "3500"]
 #ENTRYPOINT ["/root/quokka/run-all.sh"]
 #CMD ["./run-all.sh"]
 
