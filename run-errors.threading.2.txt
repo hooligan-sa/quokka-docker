@@ -1,0 +1,28 @@
+# Another threading error
+
+quokka-server_1  | Exception in thread Thread-7:
+quokka-server_1  | Traceback (most recent call last):
+quokka-server_1  |   File "/usr/lib/python3.8/threading.py", line 932, in _bootstrap_inner
+quokka-server_1  |     self.run()
+quokka-server_1  |   File "/usr/lib/python3.8/threading.py", line 870, in run
+quokka-server_1  |     self._target(*self._args, **self._kwargs)
+quokka-server_1  |   File "/home/quokka/quokka/quokka/controller/HostMonitorTask.py", line 51, in monitor
+quokka-server_1  |     set_host(host)
+quokka-server_1  |   File "/home/quokka/quokka/quokka/models/apis.py", line 314, in set_host
+quokka-server_1  |     host_obj = db.session.query(Host).filter_by(**search).one_or_none()
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/orm/query.py", line 3467, in one_or_none
+quokka-server_1  |     raise orm_exc.MultipleResultsFound(
+quokka-server_1  | sqlalchemy.orm.exc.MultipleResultsFound: Multiple rows were found for one_or_none()
+quokka-server_1  | Exception in thread Thread-8:
+quokka-server_1  | Traceback (most recent call last):
+quokka-server_1  |   File "/usr/lib/python3.8/threading.py", line 932, in _bootstrap_inner
+quokka-server_1  |     self.run()
+quokka-server_1  |   File "/usr/lib/python3.8/threading.py", line 870, in run
+quokka-server_1  |     self._target(*self._args, **self._kwargs)
+quokka-server_1  |   File "/home/quokka/quokka/quokka/controller/HostMonitorTask.py", line 51, in monitor
+quokka-server_1  |     set_host(host)
+quokka-server_1  |   File "/home/quokka/quokka/quokka/models/apis.py", line 314, in set_host
+quokka-server_1  |     host_obj = db.session.query(Host).filter_by(**search).one_or_none()
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/orm/query.py", line 3467, in one_or_none
+quokka-server_1  |     raise orm_exc.MultipleResultsFound(
+quokka-server_1  | sqlalchemy.orm.exc.MultipleResultsFound: Multiple rows were found for one_or_none()

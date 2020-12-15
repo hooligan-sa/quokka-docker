@@ -1,0 +1,72 @@
+# Below errors seen due to threading and timestamps
+
+quokka-server_1  | Exception in thread Thread-6:
+quokka-server_1  | Traceback (most recent call last):
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/base.py", line 1276, in _execute_context
+quokka-server_1  |     self.dialect.do_execute(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/default.py", line 593, in do_execute
+quokka-server_1  |     cursor.execute(statement, parameters)
+quokka-server_1  | psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "service_status_pkey"
+quokka-server_1  | DETAIL:  Key (service_id, "timestamp")=(1, 2020-12-15 12:12:52.080) already exists.
+quokka-server_1  |
+quokka-server_1  |
+quokka-server_1  | The above exception was the direct cause of the following exception:
+quokka-server_1  |
+quokka-server_1  | Traceback (most recent call last):
+quokka-server_1  |   File "/usr/lib/python3.8/threading.py", line 932, in _bootstrap_inner
+quokka-server_1  |     self.run()
+quokka-server_1  |   File "/usr/lib/python3.8/threading.py", line 870, in run
+quokka-server_1  |     self._target(*self._args, **self._kwargs)
+quokka-server_1  |   File "/home/quokka/quokka/quokka/controller/ServiceMonitorTask.py", line 124, in monitor
+quokka-server_1  |     record_service_status(service)
+quokka-server_1  |   File "/home/quokka/quokka/quokka/models/apis.py", line 438, in record_service_status
+quokka-server_1  |     db.session.commit()
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/orm/scoping.py", line 163, in do
+quokka-server_1  |     return getattr(self.registry(), name)(*args, **kwargs)
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/orm/session.py", line 1042, in commit
+quokka-server_1  |     self.transaction.commit()
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/orm/session.py", line 504, in commit
+quokka-server_1  |     self._prepare_impl()
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/orm/session.py", line 483, in _prepare_impl
+quokka-server_1  |     self.session.flush()
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/orm/session.py", line 2536, in flush
+quokka-server_1  |     self._flush(objects)
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/orm/session.py", line 2678, in _flush
+quokka-server_1  |     transaction.rollback(_capture_exception=True)
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/util/langhelpers.py", line 68, in __exit__
+quokka-server_1  |     compat.raise_(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/util/compat.py", line 182, in raise_
+quokka-server_1  |     raise exception
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/orm/session.py", line 2638, in _flush
+quokka-server_1  |     flush_context.execute()
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/orm/unitofwork.py", line 422, in execute
+quokka-server_1  |     rec.execute(self)
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/orm/unitofwork.py", line 586, in execute
+quokka-server_1  |     persistence.save_obj(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/orm/persistence.py", line 239, in save_obj
+quokka-server_1  |     _emit_insert_statements(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/orm/persistence.py", line 1083, in _emit_insert_statements
+quokka-server_1  |     c = cached_connections[connection].execute(statement, multiparams)
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/base.py", line 1011, in execute
+quokka-server_1  |     return meth(self, multiparams, params)
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/sql/elements.py", line 298, in _execute_on_connection
+quokka-server_1  |     return connection._execute_clauseelement(self, multiparams, params)
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/base.py", line 1124, in _execute_clauseelement
+quokka-server_1  |     ret = self._execute_context(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/base.py", line 1316, in _execute_context
+quokka-server_1  |     self._handle_dbapi_exception(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/base.py", line 1510, in _handle_dbapi_exception
+quokka-server_1  |     util.raise_(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/util/compat.py", line 182, in raise_
+quokka-server_1  |     raise exception
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/base.py", line 1276, in _execute_context
+quokka-server_1  |     self.dialect.do_execute(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/default.py", line 593, in do_execute
+quokka-server_1  |     cursor.execute(statement, parameters)
+quokka-server_1  | sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "service_status_pkey"
+quokka-server_1  | DETAIL:  Key (service_id, "timestamp")=(1, 2020-12-15 12:12:52.080) already exists.
+quokka-server_1  |
+quokka-server_1  | [SQL: INSERT INTO service_status (service_id, timestamp, availability, response_time) VALUES (%(service_id)s, %(timestamp)s, %(availability)s, %(response_time)s)]
+quokka-server_1  | [parameters: {'service_id': 1, 'timestamp': '2020-12-15 12:12:52.080', 'availability': True, 'response_time': 643}]
+quokka-server_1  | (Background on this error at: http://sqlalche.me/e/13/gkpj)
+

@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 MAINTAINER Patrick Holahan <tjunyat@gmail.com>
 
 # This is using/copying the actual quokka src from Chuck Black's quokka github repo
-ENV QUOKKA_BUILD_VERSION=0.7
+#ENV QUOKKA_BUILD_VERSION=0.7
 ENV TZ=Africa/Johannesburg
 
 #RUN useradd -ms /bin/bash quokka
@@ -15,6 +15,10 @@ WORKDIR /home/quokka
 USER root
 WORKDIR /home/quokka/build
 COPY conf-scripts/* ./
+
+# Swap directory back for correct installation path
+WORKDIR /home/quokka
+COPY start-scripts/* ./
 
 # Install the required software - This is done via script to do it all in one step
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone &&\
@@ -35,15 +39,15 @@ EXPOSE 15672:15672
 #CMD ["export", "FLASK_DEBUG='1'"]
 
 # Set the workdir for when you connect via docker exec -it
-WORKDIR /home/quokka
+#WORKDIR /home/quokka
 
 # This command below is just to ensure the system runs and stays operational
 # If using port 5000 (default) it interupts the actual ./run-all.sh or ./run-quokka.sh scripts which also run on that port
-ENTRYPOINT ["flask"]
-CMD ["run", "--host", "0.0.0.0", "-p", "3500"]
-#ENTRYPOINT ["/root/quokka/run-all.sh"]
-#CMD ["./run-all.sh"]
+#ENTRYPOINT ["flask"]
+#CMD ["run", "--host", "0.0.0.0", "-p", "3500"]
 
-# Start RABBITMQ server
-# CMD ["/init.sh"]
+
+# Run wrapper script to start postgres, rabbitmq, quokka, and quokka-ui
+ENTRYPOINT ["bash"]
+CMD ["./start-services.sh"]
 

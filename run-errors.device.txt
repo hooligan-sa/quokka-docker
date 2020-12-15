@@ -1,0 +1,91 @@
+# Below errors seen before importing quokka.models.Device and deleting the table
+
+quokka-server_1  | Traceback (most recent call last):
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/base.py", line 1276, in _execute_context
+quokka-server_1  |     self.dialect.do_execute(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/default.py", line 593, in do_execute
+quokka-server_1  |     cursor.execute(statement, parameters)
+quokka-server_1  | psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "pg_type_typname_nsp_index"
+quokka-server_1  | DETAIL:  Key (typname, typnamespace)=(device_id_seq, 2200) already exists.
+quokka-server_1  |
+quokka-server_1  | The above exception was the direct cause of the following exception:
+quokka-server_1  |
+quokka-server_1  | Traceback (most recent call last):
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/flask/_compat.py", line 39, in reraise
+quokka-server_1  |     raise value
+quokka-server_1  |   File "/home/quokka/quokka/quokka/__init__.py", line 58, in <module>
+quokka-server_1  |     db.create_all()
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/flask_sqlalchemy/__init__.py", line 1039, in create_all
+quokka-server_1  |     self._execute_for_all_tables(app, bind, 'create_all')
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/flask_sqlalchemy/__init__.py", line 1031, in _execute_for_all_tables
+quokka-server_1  |     op(bind=self.get_engine(app, bind), **extra)
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/sql/schema.py", line 4553, in create_all
+quokka-server_1  |     bind._run_visitor(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/base.py", line 2095, in _run_visitor
+quokka-server_1  |     conn._run_visitor(visitorcallable, element, **kwargs)
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/base.py", line 1656, in _run_visitor
+quokka-server_1  |     visitorcallable(self.dialect, self, **kwargs).traverse_single(element)
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/sql/visitors.py", line 145, in traverse_single
+quokka-server_1  |     return meth(obj, **kw)
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/sql/ddl.py", line 783, in visit_metadata
+quokka-server_1  |     self.traverse_single(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/sql/visitors.py", line 145, in traverse_single
+quokka-server_1  |     return meth(obj, **kw)
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/sql/ddl.py", line 827, in visit_table
+quokka-server_1  |     self.connection.execute(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/base.py", line 1011, in execute
+quokka-server_1  |     return meth(self, multiparams, params)
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/sql/ddl.py", line 72, in _execute_on_connection
+quokka-server_1  |     return connection._execute_ddl(self, multiparams, params)
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/base.py", line 1068, in _execute_ddl
+quokka-server_1  |     ret = self._execute_context(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/base.py", line 1316, in _execute_context
+quokka-server_1  |     self._handle_dbapi_exception(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/base.py", line 1510, in _handle_dbapi_exception
+quokka-server_1  |     util.raise_(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/util/compat.py", line 182, in raise_
+quokka-server_1  |     raise exception
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/base.py", line 1276, in _execute_context
+quokka-server_1  |     self.dialect.do_execute(
+quokka-server_1  |   File "/usr/local/lib/python3.8/dist-packages/sqlalchemy/engine/default.py", line 593, in do_execute
+quokka-server_1  |     cursor.execute(statement, parameters)
+quokka-server_1  | sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "pg_type_typname_nsp_index"
+quokka-server_1  | DETAIL:  Key (typname, typnamespace)=(device_id_seq, 2200) already exists.
+quokka-server_1  |
+quokka-server_1  | [SQL:
+quokka-server_1  | CREATE TABLE device (
+quokka-server_1  | 	id SERIAL NOT NULL,
+quokka-server_1  | 	name TEXT NOT NULL,
+quokka-server_1  | 	fqdn TEXT,
+quokka-server_1  | 	serial TEXT,
+quokka-server_1  | 	ip_address TEXT,
+quokka-server_1  | 	mac_address TEXT,
+quokka-server_1  | 	vendor TEXT,
+quokka-server_1  | 	model TEXT,
+quokka-server_1  | 	os TEXT,
+quokka-server_1  | 	version TEXT,
+quokka-server_1  | 	transport TEXT,
+quokka-server_1  | 	availability BOOLEAN,
+quokka-server_1  | 	response_time INTEGER,
+quokka-server_1  | 	sla_availability INTEGER,
+quokka-server_1  | 	sla_response_time INTEGER,
+quokka-server_1  | 	last_heard TEXT,
+quokka-server_1  | 	cpu INTEGER,
+quokka-server_1  | 	memory INTEGER,
+quokka-server_1  | 	uptime INTEGER,
+quokka-server_1  | 	os_compliance BOOLEAN,
+quokka-server_1  | 	config_compliance BOOLEAN,
+quokka-server_1  | 	last_compliance_check TEXT,
+quokka-server_1  | 	ssh_port INTEGER,
+quokka-server_1  | 	ncclient_name TEXT,
+quokka-server_1  | 	netconf_port INTEGER,
+quokka-server_1  | 	hostname TEXT,
+quokka-server_1  | 	username TEXT,
+quokka-server_1  | 	password TEXT,
+quokka-server_1  | 	PRIMARY KEY (id),
+quokka-server_1  | 	UNIQUE (name)
+quokka-server_1  | )
+quokka-server_1  |
+quokka-server_1  | ]
+quokka-server_1  | (Background on this error at: http://sqlalche.me/e/13/gkpj)
+quokka-server_1  | 172.20.0.1 - - [15/Dec/2020 11:39:32] "GET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -

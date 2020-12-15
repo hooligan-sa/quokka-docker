@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
 # Load configuration variables
-. /build/config-quokka-server.sh
+. /home/quokka/build/config-quokka-server.sh
 
 apt-get update -y
 
@@ -26,15 +26,27 @@ echo "postgres    ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
 apt-get install $minimal_apt_get_args $QUOKKA_ADD_PACKAGES
 
 # Git clone Chuck Black's quokka repo - "main" is current default branch
+# Do this as user quokka
+mkdir -p /home/quokka
+chown -R quokka:root /home/quokka
 su - quokka
-cd /home/quokka/quokka
+cd /home/quokka/
 git clone https://github.com/chuckablack/quokka/ 
 
+# Backup __init__.py and create a version to drop device table in __init__.py before db.create_all()
+# Otherwise I get the error in ../run-errors.device.txt - Seems to have disappeared now
+cd /home/quokka/quokka/quokka
+cp __init__.py orig.__init__.py
+cp __init__.py del_device_table.__init__.py
+sed -i '58ifrom quokka.models.Device import Device\nDevice.query.delete()\n' del_device_table.__init__.py
 
 
 ## PIP3 Packages ##
 ###################
 
+cd /home/quokka/quokka
+# Backup original requirements.txt
+cp requirements.txt orig.requirements.txt
 # Remove the quokka-0.0.0 requirement as it doesn't exist in pip repo
 cat requirements.txt | grep -v quokka > temp && mv temp requirements.txt
 
@@ -54,6 +66,7 @@ sudo pip3 install -r requirements.txt
 ##################
 
 # Install NPM packages
+chown -R quokka:root /home/quokka
 npm install $QUOKKA_NPM_PACKAGES
 
 # Install NPM UI packages
@@ -82,7 +95,7 @@ echo "#!/usr/bin/bash" | cat - /home/quokka/quokka/stop-all.sh > /home/quokka/qu
 echo "#!/usr/bin/bash" | cat - /home/quokka/quokka/stop-quokka.sh > /home/quokka/quokka/temp && mv /home/quokka/quokka/temp /home/quokka/quokka/stop-quokka.sh
 echo "#!/usr/bin/bash" | cat - /home/quokka/quokka/stop-workers.sh > /home/quokka/quokka/temp && mv /home/quokka/quokka/temp /home/quokka/quokka/stop-workers.sh
 
-# Make the new files executable
+# Re-make the new files executable due to above mv/add shell
 chmod a+x /home/quokka/quokka/run-*.sh
 chmod a+x /home/quokka/quokka/stop-*.sh
 
@@ -118,6 +131,12 @@ sudo systemctl enable rabbitmq-server
 sudo rabbitmqctl add_user quokkaUser quokkaPass
 sudo rabbitmqctl set_permissions quokkaUser "." "." "."
 
+# The startup scripts run through sudo for postgres and rabbitmq, so env vars need to be set
+su -
+echo "" >> /root/.bashrc
+echo "export RABBITMQ_PID_FILE=/var/lib/rabbitmq/mnesia/rabbitmq" >> /root/.bashrc
+echo "export RABBITMQ_USER=quokkaUser" >> /root/.bashrc
+echo "export RABBITMQ_PASSWORD=quokkaPass" >> /root/.bashrc
 
 
 ## Local Ubuntu/docker requirement due to install/default "root" user ##

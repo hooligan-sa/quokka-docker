@@ -1,5 +1,5 @@
 # This file is intended to be source
-# . /build/config-quokka-server.sh
+# . /home/quokka/build/config-quokka-server.sh
 
 # Info gathered from Chuck Black's Quokka-VM-Installed-Software wiki page
 # https://github.com/chuckablack/quokka/wiki/Quokka-VM-Installed-Software

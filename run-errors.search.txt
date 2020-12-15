@@ -1,0 +1,2 @@
+# The following is seen in the logs - Need to check the search string
+quokka-server_1  | 2020-12-15 16:39:16.415: !!! Exception in get device info: ConnectionClosedException('Search pattern never detected in send_command: csr1000v\\#')
